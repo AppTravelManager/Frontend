@@ -1,27 +1,35 @@
-import { StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Colors} from '../constants'
 
-function FirstLogin() {
-    return (
-        <View style={styles.container}>
-            <View style={styles.circleContainer}>
-                <View style={styles.circle}>
-                    <TouchableOpacity style= {[styles.button, {backgroundColor : '#E9C46A'}]}>
-                        <Text style={styles.buttonText}>Sign In</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.button, {backgroundColor : '#F4A261'}]}>
-                        <Text style={styles.buttonText}>Sign Up</Text>
-                    </TouchableOpacity>
+
+//In caso l'utente abbia gia fatto il primo login si va ad Home
+let  hasLogged = false;
+function FirstLogin({navigation}) {
+    if(hasLogged){
+        return navigation.navigate("Home")
+    }
+    else{
+        return (
+            <View style={styles.container}>
+                <View style={styles.circleContainer}>
+                    <View style={styles.circle}>
+                        <TouchableOpacity onPress={() => navigation.navigate("SignIn")} style= {[styles.button, {backgroundColor : Colors.yellow}]}>
+                            <Text style={styles.buttonText}>Sign In</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={[styles.button, {backgroundColor : Colors.orange}]}>
+                            <Text style={styles.buttonText}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
-        </View>
-
-    );
+        );
+    }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#2A9D8F',
+        backgroundColor: Colors.green,
     },
     circleContainer: {
         flex: 1,
