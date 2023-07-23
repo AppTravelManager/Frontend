@@ -1,5 +1,4 @@
 import {Text, View} from 'react-native';
-import {Colors} from '../constants'
 
 
 function ForgotPassword() {

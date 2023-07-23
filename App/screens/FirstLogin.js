@@ -1,6 +1,6 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {Colors} from '../constants'
-
+import {StyleSheet, View} from 'react-native';
+import {Colors} from "../constants";
+import {CustomizeButton} from "../components";
 
 //In caso l'utente abbia gia fatto il primo login si va ad Home
 let  hasLogged = false;
@@ -13,12 +13,8 @@ function FirstLogin({navigation}) {
             <View style={styles.container}>
                 <View style={styles.circleContainer}>
                     <View style={styles.circle}>
-                        <TouchableOpacity onPress={() => navigation.navigate("SignIn")} style= {[styles.button, {backgroundColor : Colors.yellow}]}>
-                            <Text style={styles.buttonText}>Sign In</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => navigation.navigate("SignUp")} style={[styles.button, {backgroundColor : Colors.orange}]}>
-                            <Text style={styles.buttonText}>Sign Up</Text>
-                        </TouchableOpacity>
+                        <CustomizeButton backgroundColor={Colors.yellow} textButton={"Login"} onPress={() => navigation.navigate("SignIn")}/>
+                        <CustomizeButton backgroundColor={Colors.orange} textButton={"Register"} onPress={() => navigation.navigate("SignUp")}/>
                     </View>
                 </View>
             </View>
@@ -45,20 +41,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    button: {
-        width: 250,
-        height: 50,
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    buttonText: {
-        color: 'white',
-        fontStyle : "normal",
-        fontWeight: 'bold',
-        fontSize: 15,
-    }
 });
 
 export default FirstLogin

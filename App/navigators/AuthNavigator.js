@@ -2,8 +2,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {FirstLogin, SignIn, SignUp, ForgotPassword, Home} from '../screens';
 import {StyleSheet} from 'react-native';
 
-import {Colors} from '../constants'
-
 const Stack = createStackNavigator();
 
 function AuthNavigator() {
@@ -20,7 +18,9 @@ function AuthNavigator() {
 
 const styles = StyleSheet.create({
     navigator: {
-        headerShown: false,
+        headerStatusBarHeight: 1,
+        headerTitle: "",
+        headerLeft: null,
         animationEnabled: false,
     },
     });

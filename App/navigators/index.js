@@ -1,1 +1,1 @@
-export { default as AuthNavigator } from './authNavigator'
+export { default as AuthNavigator } from './AuthNavigator'
