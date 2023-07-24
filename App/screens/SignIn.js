@@ -18,6 +18,7 @@ function SignIn() {
         console.log("Email: ", email);
         console.log("Pwd: ", pwd);
         // passare i dati al backend
+        //Commento per commit
     }
 
     return (
