@@ -3,11 +3,6 @@ import { View, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingVi
 import { Colors } from '../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-};
-
 function SignIn() {
     const [email, setEmail] = useState('');
     const [pwd, setPwd] = useState('');
@@ -19,6 +14,13 @@ function SignIn() {
         console.log("Pwd: ", pwd);
         // passare i dati al backend
     }
+
+    const validateEmail = (email) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        setCheckE(emailRegex.test(email));
+        console.log("test : ", checkE);
+    };
+
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={"height"} enabled={false}>
@@ -47,7 +49,7 @@ function SignIn() {
                         <Icon name={showing ? 'eye' : 'eye-slash'} style={styles.inputIcon} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => check()}>
+                <TouchableOpacity style={styles.button} onPress={() => {validateEmail(email), check()}}>
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
