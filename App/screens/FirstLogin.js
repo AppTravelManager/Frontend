@@ -13,7 +13,7 @@ function FirstLogin({navigation}) {
             <View style={styles.container}>
                 <View style={styles.circleContainer}>
                     <View style={styles.circle}>
-                        <CustomizeButton backgroundColor={Colors.yellow} textButton={"sort"} onPress={() => navigation.navigate("SignIn")}/>
+                        <CustomizeButton backgroundColor={Colors.yellow} textButton={"Log In"} onPress={() => navigation.navigate("SignIn")}/>
                         <CustomizeButton backgroundColor={Colors.orange} textButton={"Register"} onPress={() => navigation.navigate("SignUp")}/>
                     </View>
                 </View>
