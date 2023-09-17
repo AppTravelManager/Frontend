@@ -1,17 +1,111 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Animated, Easing } from 'react-native';
 import { Colors } from '../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+function validateEmail(email){
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
+
+function animateInput(field){
+        Animated.sequence([
+            Animated.timing(field, {
+                toValue: -1,
+                duration: 50,
+                easing: Easing.bounce,
+                useNativeDriver: true,
+            }),
+            Animated.timing(field, {
+                toValue: 1,
+                duration: 75,
+                easing: Easing.bounce,
+                useNativeDriver: true,
+            }),
+            Animated.timing(field, {
+                toValue: 0,
+                duration: 50,
+                easing: Easing.bounce,
+                useNativeDriver: true,
+            }),
+        ]).start();
+}
+function animatedInput(tipo, placeholder, value, onChangeText, isValid) {
+    let icona, first, second, secure;
+    const [showing, setShowing] = useState(false);
+
+    if (placeholder === "Email") {
+        icona = "envelope";
+        first = "check";
+        second = "close";
+        secure = false;
+    }
+    else
+    {
+        icona = "lock";
+        first = "eye";
+        second = "eye-slash";
+        secure = true;
+    }
+
+    return (
+        <Animated.View
+            style={[
+                styles.inputContainer,
+                {
+                    borderColor: isValid === true ? Colors.darkGreen : "#DB4437",
+                    transform: [
+                        {
+                            translateX: tipo.interpolate({
+                                inputRange: [-1, 0, 1],
+                                outputRange: [-10, 0, 10],
+                            }),
+                        },
+                    ],
+                },
+            ]}
+        >
+            <Icon name={icona} style={[styles.inputIcon, {
+                color: isValid === true ? Colors.darkGreen : "#DB4437",
+            }]}/>
+            <TextInput
+                style={styles.input}
+                placeholder={placeholder}
+                onChangeText={(text) => {
+                    onChangeText(text);
+                    if(placeholder === "Email")
+                    {
+                        setShowing(validateEmail(text))
+                    }
+                }}
+                value={value}
+                secureTextEntry={!showing && secure}
+            />
+            <TouchableOpacity onPress={() => {
+                if (secure) {
+                    setShowing(!showing);
+                }
+            }}>
+                <Icon name={showing === true ? first : second} style={[styles.inputIcon, {
+                    color: isValid === true ? Colors.darkGreen : "#DB4437",
+                }]}/>
+            </TouchableOpacity>
+        </Animated.View>
+    );
+}
+
 function SignIn({ navigation }) {
+
+    // Var. di stato per memorizzare email e pwd
     const [email, setEmail] = useState('');
     const [pwd, setPwd] = useState('');
-    const [showing, setShowing] = useState(true);
-    const [checkE, setCheckE] = useState(false);
 
+
+    // Var. per gestire gli stati di animazione di inputContainer
     const [emailAnimation] = useState(new Animated.Value(0));
     const [pwdAnimation] = useState(new Animated.Value(0));
 
+    //Var. di gestione input
     const [emailValid, setEmailValid] = useState(true);
     const [pwdValid, setPwdValid] = useState(true);
 
@@ -20,88 +114,27 @@ function SignIn({ navigation }) {
         console.log("Pwd: ", pwd);
         // Passare i dati al backend
 
+        //Se email o pwd sono vuoti o il controllo del backend non è andato bene
+        const animations = [];
         if (email === '') {
-            animateInput(emailAnimation)
-            setEmailValid(false)
-            setTimeout(() => {
-                emailAnimation.setValue(0);
-                setEmailValid(true)
-            }, 250);
+            setEmailValid(false);
+            animations.push(animateInput(emailAnimation));
         }
 
         if (pwd === '') {
-            animateInput(pwdAnimation)
-            setPwdValid(false)
-            setTimeout(() => {
-                pwdAnimation.setValue(0);
-                setPwdValid(true)
-            }, 250);
+            setPwdValid(false);
+            animations.push(animateInput(pwdAnimation));
+        }
+
+        // se ci sono animazioni si eseguono in modo parallelo
+        if (animations.length > 0) {
+            Animated.parallel(animations).start();
+            setTimeout(() => { // timeout per reimpostare i valori a true e quindi il colore iniziale
+                setPwdValid(true);
+                setEmailValid(true)
+            }, 300);
         }
     };
-
-    const validateEmail = (email) => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        setCheckE(emailRegex.test(email));
-
-
-    };
-    const animateInput= (field) => {
-
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(field, {
-                    toValue: 1,
-                    duration: 50,
-                    easing: Easing.linear,
-                    useNativeDriver: false,
-                }),
-                Animated.timing(field, {
-                    toValue: 0,
-                    duration: 50,
-                    easing: Easing.linear,
-                    useNativeDriver: false,
-                }),
-            ])
-        ).start();
-    };
-
-    const animatedInput = (tipo, placeholder, value, onChangeText, icona, state, first, second, secure) => (
-        <Animated.View
-            style={[
-                styles.inputContainer,
-                {
-                    borderColor: placeholder === 'Email' ? (emailValid ? Colors.darkGreen : 'red') : (pwdValid ? Colors.darkGreen : 'red'),
-                    transform: [
-                        {
-                            translateX: tipo.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 10],
-                            }),
-                        },
-                    ],
-                },
-            ]}
-        >
-            <Icon name={icona} style={[styles.inputIcon, {
-                color:  placeholder === 'Email' ? (emailValid ? Colors.darkGreen : "#DB4437") : (pwdValid ? Colors.darkGreen : "#DB4437")
-            }]} />
-            <TextInput
-                style={styles.input}
-                placeholder={placeholder}
-                onChangeText={onChangeText}
-                value={value}
-                secureTextEntry={showing && secure}
-            />
-            <TouchableOpacity onPress={() => {
-                if (secure) {
-                    setShowing(!showing);
-                }}}>
-                <Icon name={state ? first : second} style={[styles.inputIcon, {
-                    color:  placeholder === 'Email' ? (emailValid ? Colors.darkGreen : "#DB4437") : (pwdValid ? Colors.darkGreen : "#DB4437")
-                }]} />
-            </TouchableOpacity>
-        </Animated.View>
-    );
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={"height"} enabled={false}>
@@ -113,12 +146,9 @@ function SignIn({ navigation }) {
                     <Icon name="user" size={30} color={Colors.darkGreen} />
                 </View>
 
-                {animatedInput(emailAnimation, 'Email', email, (text) => {
-                    setEmail(text);
-                    validateEmail(text);
-                }, 'envelope', checkE, "check", "close", false)}
+                {animatedInput(emailAnimation, 'Email', email, setEmail, emailValid)}
 
-                {animatedInput(pwdAnimation, 'Password', pwd, setPwd, 'lock', showing, "eye", "eye-slash", true)}
+                {animatedInput(pwdAnimation, 'Password', pwd, setPwd,  pwdValid)}
 
                 <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
                     <Text style={styles.forgotText}>Forgot Password?</Text>
